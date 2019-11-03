@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seu.blog.dao.TagDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.seu.blog.entity.TagEntity" id="tagMap">
+        <result property="id" column="id"/>
+        <result property="tagName" column="tag_name"/>
+        <result property="avatar" column="avatar"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="queryHotTagDetails" resultType="com.seu.blog.entity.TagEntity">
+		select * from vblog_tag where  id in
+        <foreach item="tagId" collection="array" open="(" separator="," close=")">
+            #{tagId}
+        </foreach>
+        ORDER BY FIELD(id,
+        <foreach item="tagId" collection="array" separator="," close=")">
+            #{tagId}
+        </foreach>
+	</select>
+
+    <select id="queryTagDetails" resultType="com.seu.blog.vo.TagVo">
+        SELECT vt.*, count(vat.tag_id) as articles from vblog_tag vt
+            LEFT JOIN vblog_article_tag vat on vt.id = vat.tag_id
+        GROUP BY vt.id
+    </select>
+
+    <select id="queryOneTagDetail" parameterType="Integer" resultType="com.seu.blog.vo.TagVo">
+        SELECT vt.*, count(vat.tag_id) as articles from vblog_tag vt
+        LEFT JOIN vblog_article_tag vat on vt.id = vat.tag_id
+        WHERE vat.tag_id = #{tagId}
+    </select>
+
+</mapper>

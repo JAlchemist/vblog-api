@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seu.blog.dao.CategoryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.seu.blog.entity.CategoryEntity" id="categoryMap">
+        <result property="id" column="id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="avatar" column="avatar"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="queryCategoryDetails" resultType="com.seu.blog.vo.CategoryVo">
+        select c.*, count(a.category_id) as articles from vblog_category c
+            left join vblog_article a on a.category_id = c.id
+        group by c.id
+    </select>
+
+    <select id="queryOneCategoryDetail" parameterType="Integer" resultType="com.seu.blog.vo.CategoryVo">
+        select c.*, count(a.category_id) as articles from vblog_category c
+        left join vblog_article a on a.category_id = c.id
+        where a.category_id = #{categoryId}
+    </select>
+
+
+</mapper>

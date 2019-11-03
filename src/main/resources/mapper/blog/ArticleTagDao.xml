@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seu.blog.dao.ArticleTagDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.seu.blog.entity.ArticleTagEntity" id="articleTagMap">
+        <result property="id" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="tagId" column="tag_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="queryHotTagIds" parameterType="Integer" resultType="Integer">
+        select tag_id from vblog_article_tag GROUP BY tag_id ORDER BY count(*) desc
+          limit 0,#{limit}
+    </select>
+
+    <select id="queryArticlesByTag" parameterType="com.seu.blog.vo.TagPageVo" resultType="com.seu.blog.entity.ArticleEntity">
+        select va.* from vblog_article_tag vat JOIN vblog_article va on va.id = vat.article_id
+        where vat.tag_id = #{tagId} LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="queryArticleTags" parameterType="Long" resultType="com.seu.blog.entity.TagEntity">
+        SELECT vt.* from vblog_article_tag vat INNER JOIN vblog_tag vt ON vat.tag_id=vt.id
+        where vat.article_id=#{articleId}
+    </select>
+
+</mapper>
